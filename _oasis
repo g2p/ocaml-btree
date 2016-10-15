@@ -13,9 +13,9 @@ Library btree
   Path:               lib
   Findlibname:        btree
   Modules:            Btree, Heap, Error, IntElement, Btree_s
-  BuildDepends:       result, cstruct, cstruct.syntax, sexplib, sexplib.syntax,
+  BuildDepends:       result, cstruct, cstruct.ppx, sexplib, ppx_sexp_conv,
                       mirage-types.lwt, lwt, mirage-block
-  XMETARequires:      result, cstruct, sexplib, sexplib,
+  XMETARequires:      result, cstruct, sexplib,
                       mirage-types.lwt, lwt, mirage-block
 
 Document btree

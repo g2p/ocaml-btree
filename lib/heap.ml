@@ -37,13 +37,15 @@ module Root_block(B: V1_LWT.BLOCK) = struct
   let magic = "MIRAGEFS\192\157\086\025\215\044\040\236"
 
   (* The first sector will contain a "root block" *)
-  cstruct hdr {
-      uint8_t magic[16];
-      uint32_t version;
-      uint64_t root;
-      uint64_t high_water_mark;
-      uint64_t free_list;
-    } as little_endian
+  [%%cstruct
+  type hdr = {
+    magic: uint8_t [@len 16];
+    version: uint32_t;
+    root: uint64_t;
+    high_water_mark: uint64_t;
+    free_list: uint64_t;
+  }[@@little_endian]
+  ]
 
   type t = {
     magic: string;
@@ -51,7 +53,7 @@ module Root_block(B: V1_LWT.BLOCK) = struct
     root: int64; (* reference to the root reference block *)
     high_water_mark: int64; (* sectors >= the high_water_mark have not been written to *)
     free_list: int64; (* reference to the first block on the free list *)
-  } with sexp
+  }[@@deriving sexp]
 
   let create () = { magic; version = 0l; root = 0L; high_water_mark = 1L; free_list = 0L }
 
@@ -92,12 +94,14 @@ end
 module Allocated_block(B: V1_LWT.BLOCK) = struct
   let magic = "MIRAGEBLOCK\089\060\224\199\110"
 
-  cstruct hdr {
-      uint8_t magic[16];
-      uint32_t version;
-      uint64_t length;
-      uint8_t deleted;
-    } as little_endian
+  [%%cstruct
+  type hdr = {
+    magic: uint8_t [@len 16];
+    version: uint32_t;
+    length: uint64_t;
+    deleted: uint8_t;
+  }[@@little_endian]
+  ]
 
 
   type t = {
@@ -105,7 +109,7 @@ module Allocated_block(B: V1_LWT.BLOCK) = struct
     version: int32;
     length: int64;
     deleted: bool;
-  } with sexp
+  }[@@deriving sexp]
 
   let create ~length= { magic; version = 0l; length; deleted = false }
 
@@ -214,10 +218,12 @@ module Make(Underlying: V1_LWT.BLOCK) = struct
       mutable connected: bool;
     }
 
-    cstruct hdr {
-        uint64_t nrefs;
-        uint64_t nbytes;
-      } as little_endian
+    [%%cstruct
+    type hdr = {
+      nrefs: uint64_t;
+      nbytes: uint64_t;
+    }[@@little_endian]
+    ]
 
     let ref t = t.offset
 

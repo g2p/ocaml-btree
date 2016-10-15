@@ -35,18 +35,22 @@ module Make(B: V1_LWT.BLOCK)(E: Btree_s.ELEMENT) = struct
 
   let magic = "MIRAGEBTREE\174\067\003\088\230"
 
-  cstruct tree_hdr {
-      uint8_t magic[16];
-      uint16_t d;
-    } as little_endian
+  [%%cstruct
+  type tree_hdr = {
+    magic: uint8_t [@len 16];
+    d: uint16_t;
+  }[@@little_endian]
+  ]
 
   module Node = struct
 
     let magic = "NODE\161\218\173\152\079\151\194\065\090\038\040\183"
 
-    cstruct node_hdr {
-        uint8_t magic[16];
-      } as little_endian
+    [%%cstruct
+    type node_hdr = {
+      magic: uint8_t [@len 16];
+    }[@@little_endian]
+    ]
 
     type t = unit
 

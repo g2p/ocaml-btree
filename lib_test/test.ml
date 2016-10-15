@@ -29,10 +29,9 @@ let expect_ok_msg = function
 let heap_format () =
   let t =
     Ramdisk.connect ~name:"heap"
-    >>= fun x ->
-    let from = expect_ok "Ramdisk.connect" x in
+    >>= fun block ->
     let module H = Heap.Make(Ramdisk) in
-    H.format ~block:from ()
+    H.format ~block ()
     >>= fun x ->
     let () = expect_ok_msg x in
     Lwt.return () in
@@ -41,13 +40,12 @@ let heap_format () =
 let heap_connect () =
   let t =
     Ramdisk.connect ~name:"heap"
-    >>= fun x ->
-    let from = expect_ok "Ramdisk.connect" x in
+    >>= fun block ->
     let module H = Heap.Make(Ramdisk) in
-    H.format ~block:from ()
+    H.format ~block ()
     >>= fun x ->
     let () = expect_ok_msg x in
-    H.connect ~block:from ()
+    H.connect ~block ()
     >>= fun h ->
     let _ = expect_ok_msg h in
     Lwt.return () in
@@ -56,13 +54,12 @@ let heap_connect () =
 let heap_allocate_deallocate () =
   let t =
     Ramdisk.connect ~name:"heap"
-    >>= fun x ->
-    let from = expect_ok "Ramdisk.connect" x in
+    >>= fun block ->
     let module H = Heap.Make(Ramdisk) in
-    H.format ~block:from ()
+    H.format ~block ()
     >>= fun x ->
     let () = expect_ok_msg x in
-    H.connect ~block:from ()
+    H.connect ~block ()
     >>= fun h ->
     let h = expect_ok_msg h in
     H.root ~heap:h ()
@@ -80,13 +77,12 @@ let heap_allocate_deallocate () =
 let heap_write_read () =
   let t =
     Ramdisk.connect ~name:"heap"
-    >>= fun x ->
-    let from = expect_ok "Ramdisk.connect" x in
+    >>= fun block ->
     let module H = Heap.Make(Ramdisk) in
-    H.format ~block:from ()
+    H.format ~block ()
     >>= fun x ->
     let () = expect_ok_msg x in
-    H.connect ~block:from ()
+    H.connect ~block ()
     >>= fun h ->
     let h = expect_ok_msg h in
     (* Allocate 2 blocks *)
@@ -131,8 +127,7 @@ let heap_write_read () =
 let tree_create () =
   let t =
     Ramdisk.connect ~name:"heap"
-    >>= fun x ->
-    let block = expect_ok "Ramdisk.connect" x in
+    >>= fun block ->
     let module T = Btree.Make(Ramdisk)(IntElement) in
     T.create ~block ~d:2 ()
     >>= fun t ->
